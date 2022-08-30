@@ -4,6 +4,7 @@
 mod circuit;
 
 use std::iter::repeat_with;
+use std::time::Instant;
 
 use self::circuit::Circuit;
 use clap::Parser;
@@ -14,38 +15,52 @@ use plonky2_ecdsa::curve::{
     ecdsa::{sign_message, verify_message, ECDSAPublicKey, ECDSASecretKey, ECDSASignature},
     secp256k1::Secp256K1,
 };
+use plonky2_ecdsa::curve::curve_types::{AffinePoint, CurveScalar};
 use tracing::instrument;
+use rayon::prelude::*;
+
 
 #[derive(Clone, Debug, Parser)]
 pub struct Options {
-    /// The number of signatures in the batch.
     #[clap(long, default_value = "4")]
     pub size: usize,
 }
 
 type Curve = Secp256K1;
 type PublicKey = ECDSAPublicKey<Curve>;
-type MessageHash = <Curve as TCurve>::ScalarField;
+type Plaintext = <Curve as TCurve>::BaseField;
+type Ciphertext = <Curve as TCurve>::BaseField;
 type Signature = ECDSASignature<Curve>;
+type Nonce = <Curve as TCurve>::ScalarField;
 
-fn test_signature() -> (PublicKey, MessageHash, Signature) {
+fn test_signature() -> (PublicKey, Plaintext, Ciphertext, Nonce) {
     type Field = <Curve as TCurve>::ScalarField;
     let secret_key = ECDSASecretKey(Field::rand());
     let public_key = secret_key.to_public();
-    let message_hash = MessageHash::rand();
-    let signature = sign_message(message_hash, secret_key);
-    assert!(verify_message(message_hash, signature, public_key));
-    (public_key, message_hash, signature)
+    let message = Plaintext::rand();
+    let nonce = Nonce::rand();
+    let (c1, c2) = encrypt(message.clone(), public_key.clone(), nonce.clone());
+    (public_key, message, c2, nonce)
+}
+
+fn encrypt(msg: Plaintext, pk: PublicKey, nonce: <Curve as TCurve>::ScalarField) -> (AffinePoint<Secp256K1>, <Curve as TCurve>::BaseField) {
+    let c1 = (CurveScalar(nonce.clone()) * Secp256K1::GENERATOR_PROJECTIVE).to_affine();
+    let dh = CurveScalar(nonce) * pk.0.to_projective();
+    let c2 = msg + dh.x;
+    return (c1, c2);
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[allow(clippy::unused_async)]
 pub async fn main(options: Options) -> Result<()> {
     let n = options.size;
-    let circuit = Circuit::new(n);
-    let input = repeat_with(test_signature).take(n);
-    let proof = circuit.prove(input)?;
-    circuit.verify(proof)?;
+
+    let inputs: Vec<_> = repeat_with(test_signature).take(n).map(|args| (Circuit::new(), args)).collect();
+    let start = Instant::now();
+    let proofs: Result<Vec<_>> = inputs.into_par_iter().map(|(c, args)| c.prove(args)).collect();
+    let proof_time = start.elapsed();
+    println!("Proof time: {:4}.{:09}", proof_time.as_secs(), proof_time.subsec_nanos());
+    //circuit.verify(proof)?;
     Ok(())
 }
 

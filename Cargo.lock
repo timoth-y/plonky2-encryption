@@ -430,6 +430,7 @@ dependencies = [
  "plonky2",
  "plonky2_ecdsa",
  "proptest",
+ "rayon",
  "tempfile",
  "thiserror",
  "tracing",
@@ -1170,7 +1171,7 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 [[package]]
 name = "plonky2"
 version = "0.1.0"
-source = "git+https://github.com/mir-protocol/plonky2?branch=main#83643aa5840377f3de1f84525a42c34e92ac265a"
+source = "git+https://github.com/recmo/plonky2?branch=ecda-bench#7a26ba7fd42e66a56668e0c2cd5e1b5fe8d274e4"
 dependencies = [
  "anyhow",
  "env_logger",
@@ -1192,7 +1193,7 @@ dependencies = [
 [[package]]
 name = "plonky2_ecdsa"
 version = "0.1.0"
-source = "git+https://github.com/mir-protocol/plonky2?branch=main#83643aa5840377f3de1f84525a42c34e92ac265a"
+source = "git+https://github.com/recmo/plonky2?branch=ecda-bench#7a26ba7fd42e66a56668e0c2cd5e1b5fe8d274e4"
 dependencies = [
  "anyhow",
  "itertools",
@@ -1209,7 +1210,7 @@ dependencies = [
 [[package]]
 name = "plonky2_field"
 version = "0.1.0"
-source = "git+https://github.com/mir-protocol/plonky2?branch=main#83643aa5840377f3de1f84525a42c34e92ac265a"
+source = "git+https://github.com/recmo/plonky2?branch=ecda-bench#7a26ba7fd42e66a56668e0c2cd5e1b5fe8d274e4"
 dependencies = [
  "anyhow",
  "itertools",
@@ -1224,7 +1225,7 @@ dependencies = [
 [[package]]
 name = "plonky2_u32"
 version = "0.1.0"
-source = "git+https://github.com/mir-protocol/plonky2?branch=main#83643aa5840377f3de1f84525a42c34e92ac265a"
+source = "git+https://github.com/recmo/plonky2?branch=ecda-bench#7a26ba7fd42e66a56668e0c2cd5e1b5fe8d274e4"
 dependencies = [
  "anyhow",
  "itertools",
@@ -1238,7 +1239,7 @@ dependencies = [
 [[package]]
 name = "plonky2_util"
 version = "0.1.0"
-source = "git+https://github.com/mir-protocol/plonky2?branch=main#83643aa5840377f3de1f84525a42c34e92ac265a"
+source = "git+https://github.com/recmo/plonky2?branch=ecda-bench#7a26ba7fd42e66a56668e0c2cd5e1b5fe8d274e4"
 
 [[package]]
 name = "plotters"

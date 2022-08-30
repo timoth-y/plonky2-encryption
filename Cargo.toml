@@ -27,6 +27,8 @@ plonky2_ecdsa = { git = "https://github.com/mir-protocol/plonky2", branch = "mai
 proptest = { version = "1.0", optional = true }
 criterion = { version = "0.3", optional = true, features = [ "async_tokio" ] }
 
+rayon = "1.5"
+
 [dev-dependencies]
 proptest = { version = "1.0" }
 tempfile = "3.0"
@@ -45,9 +47,9 @@ overflow-checks = false
 # while having neglible impact on incremental build times.
 [profile.dev.package."*"]
 opt-level = 3
-
-[patch.crates-io]
-cli-batteries = { git = "https://github.com/recmo/cli-batteries", branch = "flame" }
+#
+#[patch.crates-io]
+#cli-batteries = { git = "https://github.com/recmo/cli-batteries", branch = "flame" }
 
 [patch."https://github.com/mir-protocol/plonky2"]
 plonky2 = { git = "https://github.com/recmo/plonky2", branch = "ecda-bench" }
